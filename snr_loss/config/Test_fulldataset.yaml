@@ -1,0 +1,74 @@
+output_dir: 'results'
+pretrained_model_path: "/disk527/Commondisk/a804_djr/myproject/HDRev-Diff-main/pretrained/models--stable-diffusion-v1-5--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14"
+pretrained_controlnet_model_path: "/disk527/Commondisk/a804_djr/myproject/HDRev-Diff-main/pretrained/models--lllyasviel--control_v11e_sd15_ip2p/snapshots/1fed6ebb905c61929a60514830eb05b039969d6d" 
+gradient_checkpointing: False
+
+conditioning_channels: [64, 128, 256, 512]
+conditioning_embedding_out_channels: [128, 128, 256, 512]
+
+learning_rate: 0.00001
+lr_scheduler_type: 'linear'
+lr_warmup_steps: 0
+max_grad_norm: 1.0
+adam_beta1: 0.99
+adam_beta2: 0.999
+adam_weight_decay: 1.e-2
+adam_epsilon: 1.e-8
+
+global_seed: 63
+
+batch_size: 1
+num_workers: 24
+max_train_epoch: -1
+max_train_steps: 50000
+checkpointing_epoch: -1
+checkpointing_steps: 1000
+gradient_accumulation_steps: 1
+
+train_unet: True
+unet_trainable_modules:
+  - "conv_out"
+
+train_controlnet: True
+controlnet_trainable_modules:
+  - ""
+
+noise_scheduler_kwargs:
+  num_train_timesteps: 1000
+  beta_start: 0.00085
+  beta_end: 0.012
+  beta_schedule: "scaled_linear"
+  rescale_betas_zero_snr: False
+  prediction_type: "epsilon"
+
+encoder_type: 'hybrid'
+
+encoder_config:
+  num_bins: 5
+  img_size: 192
+  target_channels: [64, 128, 256, 512]
+  pretrained_convlstm_I_path: "pretrained/HDRev/Encoder_I.pth"
+  pretrained_convlstm_E_path: "pretrained/HDRev/Encoder_E.pth"
+  pretrained_swin_I_path: "pretrained/SwinTransformer/swinv2_base_patch4_window12_192_22k.pth"
+  pretrained_swin_E_path: "pretrained/SwinTransformer/swinv2_base_patch4_window12_192_22k.pth"
+  pretrained_merge_path: "pretrained/HDRev/Merge.pth"
+
+test_dataset:
+  dataset_type: evs_image_h5
+  dataroot: "train"
+
+  isTrain: True
+  patch_size: [512, 512]
+  video_length: 1
+  event_norm: True 
+  num_bins: 5
+  max_dataset_size: 10
+  under_over_ratio: 0.05
+  event_representation: voxel_grid
+
+validation_pipeline: Stage
+validation_steps: 1
+validation_setup:
+  num_inference_steps: 9
+  eta: 1.0
+

@@ -1,0 +1,72 @@
+output_dir: checkpoints
+pretrained_model_path: "pretrained/models--stable-diffusion-v1-5--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14"
+pretrained_controlnet_model_path: "pretrained/models--lllyasviel--control_v11e_sd15_ip2p/snapshots/1fed6ebb905c61929a60514830eb05b039969d6d"   
+gradient_checkpointing: false
+use_image_prompt: false
+control_type: evs+ldr
+conditioning_channels: 512
+learning_rate: 1.0e-04
+lr_scheduler_type: linear
+lr_warmup_steps: 0
+max_grad_norm: 1.0
+adam_beta1: 0.99
+adam_beta2: 0.999
+adam_weight_decay: 0.01
+adam_epsilon: 1.0e-08
+global_seed: 63
+batch_size: 1
+num_workers: 16
+max_train_epoch: -1
+max_train_steps: 30000
+checkpointing_epoch: -1
+checkpointing_steps: 10000
+gradient_accumulation_steps: 2
+cfg_random_null_text: true
+cfg_random_null_text_ratio: 0.1
+train_controlnet: true
+controlnet_trainable_modules:
+- ''
+train_vae_decoder: false
+vae_trainable_modules:
+- fusion_layer
+vae_lora_injection:
+- UpDecoderBlock2D
+noise_scheduler_kwargs:
+  num_train_timesteps: 1000
+  beta_start: 0.00085
+  beta_end: 0.012
+  beta_schedule: scaled_linear
+  rescale_betas_zero_snr: false
+  prediction_type: epsilon
+
+encoder_type: 'hybrid'
+
+encoder_config:
+  num_bins: 5
+  img_size: 192
+  target_channels: [64, 128, 256, 512]
+  pretrained_convlstm_I_path: "pretrained/HDRev/Encoder_I.pth"
+  pretrained_convlstm_E_path: "pretrained/HDRev/Encoder_E.pth"
+  pretrained_swin_I_path: "pretrained/SwinTransformer/swinv2_base_patch4_window12_192_22k.pth"
+  pretrained_swin_E_path: "pretrained/SwinTransformer/swinv2_base_patch4_window12_192_22k.pth"
+  pretrained_merge_path: "pretrained/HDRev/Merge.pth"
+
+train_dataset:
+  dataset_type: evs_image_h5single
+  dataroot: "/home/dujieru/my_project/hdrev-diff/results/up_Test_hybrid_SNR_loss-2026-05-13T02-46-44/inputs_w_latents.h5"  # 请修改为up_test生成的latents文件路径
+  isTrain: true
+  patch_size:
+  - 512
+  - 512
+  video_length: 1
+  event_norm: true
+  num_bins: 5
+  max_dataset_size: 20000
+  under_over_ratio: 0.2
+  event_representation: voxel_grid
+validation_pipeline: Color
+validation_steps: 1000
+validation_setup:
+  guidance_scale: 7.5
+  num_inference_steps: 9
+  eta: 1.0
